@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="stylesheet.css">
+		<script src="http://maps.googleapis.com/maps/api/js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src="jQueryRotate.js"></script>
+		<script src="map.js"></script>
+		<script src="sail.js"></script>
+	</head>
+
+	<body>
+
+	<div id="googleMap"></div>
+	<div id="controls">
+		<div  id='compassContainer' >
+			<img class='compass' id='windCompass'src="compass.png">
+			<img class='compass' id='bearingCompass'src="compass.png">
+			<div id='needle1'></div>
+			<div id='needle2'></div>
+		</div>
+		<div style="float:left">	
+		<button id='left'><img src="arrow-left.png"></button>
+		<button id='right'><img src="arrow-right.png"></button>
+		<button id='sail'>SAIL</button>
+		<p id='compass'></p>
+		</div>
+		<div style="float:right">
+		<img id='wind' src="arrow.png">
+		
+		<p id='clock'></p>
+		</div>
+	</div>
+	
+	</body>
+
+</html>

@@ -1,0 +1,46 @@
+#googleMap{
+	position: relative;
+	float: left;
+	width:70%;
+	height:600px;
+}
+
+#controls{
+	position: relative;
+	float: right;
+	width: 30%;
+	background-color: blue;
+}
+
+#wind{
+	position: relative;
+	height: 20px;
+	top:200px;
+}
+
+button{
+	height: 50px;
+}
+
+.compass{
+	height: 250px;
+	width: 250px;
+}
+
+#bearingCompass{
+	position: relative;
+}
+#needle1{
+	position: absolute;
+	height: 250px;
+	width: 4px;
+	/*background-color: red;*/
+	background: linear-gradient(180deg, #FF0000 50%, rgba(0,0,0,0) 50%);
+}
+#needle2{
+	position: absolute;
+	height: 250px;
+	width: 4px;
+	/*background-color: red;*/
+	background: linear-gradient(180deg, #FF0000 50%, rgba(0,0,0,0) 50%);
+}
