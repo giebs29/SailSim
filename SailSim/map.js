@@ -71,78 +71,27 @@ $(document).ready(function(){
 	$('#needle2').rotate(windAngle);
 
 	$('#sail').click(function(){
-
-		var time = prompt("How many hours on this course?", "0.0");
-
-		if (time != null) {
-		    hours +=Number(time);
-		}
-	
-
-		var tempObject= oppositeAdjacent(heading,100);
-
-		var twa = trueWindAngle(heading,windAngle);
-		var speed =calculateSpeed(twa)
-
-		
-		lat += ((tempObject.lat/1000)*speed)*time;
-		lon += ((tempObject.lon/1000)*speed)*time;
-
-		line.push(new google.maps.LatLng(lat,lon));
-
-		var newPosition=new google.maps.LatLng(lat,lon);
-		sailboat.position=newPosition
-		sailboat.setMap(map);
-
-		var sailroute=new google.maps.Polyline({
-		  path:line,
-		  strokeColor:"#0000FF",
-		  strokeOpacity:0.8,
-		  strokeWeight:2
-		  });
-
-		
-
-		sailroute.setMap(map);
-		map.panTo(new google.maps.LatLng(lat,lon));
-		// $('#clock').remove();
-		$('#clock').text('Elapsed Time: '+hours+' hrs')
-
-		weather = getWeather(lat,lon);
-		windAngle = weather.current_observation.wind_degrees;
-		windSpeed = Number(weather.current_observation.wind_gust_mph);
-
-		var city = weather.location.city;
-		var state = weather.location.state;
-
-		console.log(windAngle,windSpeed,city,state);
-
-		$('#needle2').rotate(windAngle);
+		moveBoat(map);
 	});
 
-	
-
 	$('#left').click(function(){
-		heading -= 5;
-
-		if(heading < 0){
-			heading = heading+360; 
-		}
-		$('#compass').text("Heading: "+heading)
-		$('#boatcompass').rotate(heading);
-		$('#boat').rotate(heading);
-
+		changeHeading('LEFT');
 	});
 
 	$('#right').click(function(){
-		heading += 5;
+		changeHeading('RIGHT');
+	});
 
-		if(heading >360){
-			heading = heading-360; 
-		}
-		$('#compass').text("Heading: "+heading)
-		$('#boatcompass').rotate(heading);
-		$('#boat').rotate(heading);
+	$("body").keydown(function(e) {
+  		if(e.keyCode == 37) { // left
+    		changeHeading('LEFT');
+  		}
+  		else if(e.keyCode == 39) { // right
+	    	changeHeading('RIGHT');
+  		}
+  		else if(e.keyCode == 32) { // right
+	    	moveBoat(map);
+  		}
 	});
 
 });
