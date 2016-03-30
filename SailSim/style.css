@@ -30,17 +30,34 @@ button{
 #bearingCompass{
 	position: relative;
 }
-#needle1{
-	position: absolute;
-	height: 250px;
-	width: 4px;
-	/*background-color: red;*/
-	background: linear-gradient(180deg, #FF0000 50%, rgba(0,0,0,0) 50%);
-}
+
 #needle2{
 	position: absolute;
 	height: 250px;
 	width: 4px;
 	/*background-color: red;*/
 	background: linear-gradient(180deg, #FF0000 50%, rgba(0,0,0,0) 50%);
+}
+
+#boatcompass{
+	height: 150px;
+	width:20;
+	position: absolute;
+	-webkit-transform-origin: 100% 100%;
+}
+
+#clock{
+	font-weight: bold;
+	font-size: 20px;
+	font-family: Arial;
+	color: white;
+
+}
+
+#compass{
+	font-weight: bold;
+	font-size: 20px;
+	font-family: Arial;
+	color: white;
+
 }

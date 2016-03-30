@@ -2,7 +2,10 @@ var myCenter=new google.maps.LatLng(46.780754, -92.086534);
 var lat=46.780754;
 var lon =-92.086534;
 var heading = 360;
+var weather = "";
+
 var windAngle =27;
+var windSpeed = 0;
 var hours=0;
 var line =[];
 
@@ -40,20 +43,30 @@ $(document).ready(function(){
 	line.push(new google.maps.LatLng(lat,lon));
 	sailroute.setMap(map);
 
-	$('#compass').text(heading)
-	$('#clock').html('<p>Elapsed time: '+hours+' hrs</p>')
+	$('#compass').text("Heading: "+heading);
+	$('#clock').html('<p>Elapsed Time: '+hours+' hrs</p>');
 	
-	var needle1Pos =$('#bearingCompass').position();
+	var compassPos =$('#bearingCompass').position();
 	var needle2Pos =$('#windCompass').position();
 	
-	$('#needle1').css({
-		top:needle1Pos.top,
-		left: ($('#bearingCompass').width()/2)-2,
+	$('#boatcompass').css({
+		top:compassPos.top+50,
+		left: ($('#bearingCompass').width()/2)-15.35,
 	});
+
 	$('#needle2').css({
 		top:needle2Pos.top,
 		left: ($('#windCompass').width()/2)-2,
 	});
+
+	weather = getWeather(lat,lon);
+	windAngle = weather.current_observation.wind_degrees;
+	windSpeed = Number(weather.current_observation.wind_gust_mph);
+
+	var city = weather.location.city;
+	var state = weather.location.state;
+
+	console.log(windAngle,windSpeed,city,state);
 	
 	$('#needle2').rotate(windAngle);
 
@@ -62,7 +75,7 @@ $(document).ready(function(){
 		var time = prompt("How many hours on this course?", "0.0");
 
 		if (time != null) {
-		    hours +=time;
+		    hours +=Number(time);
 		}
 	
 
@@ -88,10 +101,23 @@ $(document).ready(function(){
 		  strokeWeight:2
 		  });
 
+		
+
 		sailroute.setMap(map);
 		map.panTo(new google.maps.LatLng(lat,lon));
 		// $('#clock').remove();
-		$('#clock').html('<p>Elapsed time: '+hours+' hrs</p>')
+		$('#clock').text('Elapsed Time: '+hours+' hrs')
+
+		weather = getWeather(lat,lon);
+		windAngle = weather.current_observation.wind_degrees;
+		windSpeed = Number(weather.current_observation.wind_gust_mph);
+
+		var city = weather.location.city;
+		var state = weather.location.state;
+
+		console.log(windAngle,windSpeed,city,state);
+
+		$('#needle2').rotate(windAngle);
 	});
 
 	
@@ -102,8 +128,9 @@ $(document).ready(function(){
 		if(heading < 0){
 			heading = heading+360; 
 		}
-		$('#compass').text(heading)
-		$('#needle1').rotate(heading);
+		$('#compass').text("Heading: "+heading)
+		$('#boatcompass').rotate(heading);
+		$('#boat').rotate(heading);
 
 	});
 
@@ -113,14 +140,11 @@ $(document).ready(function(){
 		if(heading >360){
 			heading = heading-360; 
 		}
-		$('#compass').text(heading)
-		$('#needle1').rotate(heading);
+		$('#compass').text("Heading: "+heading)
+		$('#boatcompass').rotate(heading);
+		$('#boat').rotate(heading);
 	});
 
-	$('#windChange').click(function(){
-		windAngle = Math.floor((Math.random() * 360) + 0);
-		$('#needle2').rotate(windAngle);
-	});
 });
 
 
