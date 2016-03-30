@@ -116,6 +116,11 @@ $(document).ready(function(){
 		$('#compass').text(heading)
 		$('#needle1').rotate(heading);
 	});
+
+	$('#windChange').click(function(){
+		windAngle = Math.floor((Math.random() * 360) + 0);
+		$('#needle2').rotate(windAngle);
+	});
 });
 
 
