@@ -35,6 +35,7 @@ function trueWindAngle(heading,wind){
 }
 
 function calculateSpeed(twa,windSpeed){
+	var constant = 0.6;
 
 	var powerRatio = twa/137.5;
 
@@ -52,7 +53,7 @@ function calculateSpeed(twa,windSpeed){
 		windSpeed = 2;
 	}
 
-	speed = windSpeed*powerRatio
+	speed = (windSpeed*powerRatio)*constant;
 
 	return speed;
 }
