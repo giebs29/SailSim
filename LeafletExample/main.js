@@ -38,8 +38,7 @@
             newCoords = map.unproject(newPt),
             dist = L.GeometryUtil.distance(map, currentCoords, newCoords),
             duration = Math.pow(dist, 2),
-            newBearingLine = _createBearingLine(currentCoords, newCoords),
-            inter;
+            newBearingLine = _createBearingLine(currentCoords, newCoords);
 
             // add new lat lng to boat path
             path.addLatLng(newCoords);
@@ -53,9 +52,9 @@
 
 
 
-            _moveBoat(map, boat, newBearingLine, dist);
+            _moveBoat(map, boat, newBearingLine, dist, path);
 
-        function _moveBoat(m, b, n, d) {
+        function _moveBoat(m, b, n, d, p) {
             console.log(m,b,n,d);
             var increment = 1/d,
                 start = 0,
@@ -65,13 +64,10 @@
                     var newPt = L.GeometryUtil.interpolateOnLine(m,n,start);
                         b.setLatLng(newPt.latLng);
                     if (start >= 1) {
-                        inter.clearInterval();
+                        clearInterval(inter);
+                        _sail(m, b, p);
                     }
                 }, 100);
-            // for(start <= d; start += increment;) {
-
-            // }
-            // inter.clearInterval();
         }
 
         function _createBearingLine(c, n) {
