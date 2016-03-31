@@ -54,10 +54,24 @@ button{
 
 }
 
-#compass{
+#heading{
+
 	font-weight: bold;
 	font-size: 20px;
 	font-family: Arial;
 	color: white;
 
+}
+
+#windSpeed{
+	
+	font-weight: bold;
+	font-size: 20px;
+	font-family: Arial;
+	color: white;
+
+}
+
+#compassContainer {
+	display: inline-block;
 }
