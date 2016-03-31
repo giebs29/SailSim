@@ -34,21 +34,26 @@ function trueWindAngle(heading,wind){
 	return twa
 }
 
-function calculateSpeed(twa){
-	var constant = 1;
-	var speed =0;
+function calculateSpeed(twa,windSpeed){
 
-	speed = twa/110;
+	var powerRatio = twa/137.5;
 
 	if (twa > 110){
-		speed=(110-(twa-110))/110;
+		powerRatio=(110-(twa-110))/137.5;
 	}
 
 	if (twa < 30){
-		speed=(twa/110)/2;
+		powerRatio=(twa/110)/2;
 	}
 
-	console.log(twa,speed)
+	console.log(twa,powerRatio)
+
+	if (windSpeed ==0){
+		windSpeed = 2;
+	}
+
+	speed = windSpeed*powerRatio
+
 	return speed;
 }
 
@@ -61,7 +66,7 @@ function changeHeading(direction){
 			heading = heading+360; 
 		}
 
-		$('#compass').text("Heading: "+heading);
+		$('#heading').text("Heading: "+heading);
 		$('#boatcompass').rotate(heading);
 		$('#boat').rotate(heading);
 
@@ -74,14 +79,26 @@ function changeHeading(direction){
 		if(heading >360){
 			heading = heading-360; 
 		}
-		$('#compass').text("Heading: "+heading)
+		$('#heading').text("Heading: "+heading)
 		$('#boatcompass').rotate(heading);
 		$('#boat').rotate(heading);
 	}
 
 }
 
-function moveBoat(map){
+function moveBoat(map,lat,lng,heading,windAngle,windSpeed){
+	var moveObject = {
+		lat:'',
+		lng:'',
+		windAngle:0,
+		windSpeed:0,
+		city:'',
+		state:'',
+	}
+
+	moveObject.lat = lat;
+	moveObject.lng = lng;
+
 	var time = prompt("How many hours on this course?", "0.0");
 
 	if (time != null) {
@@ -99,46 +116,63 @@ function moveBoat(map){
 	var tempObject= oppositeAdjacent(heading,100);
 
 	var twa = trueWindAngle(heading,windAngle);
-	var speed =calculateSpeed(twa)
+	var speed =calculateSpeed(twa, windSpeed)
 
 	
-	lat += ((tempObject.lat/1000)*speed)*time;
-	lon += ((tempObject.lon/1000)*speed)*time;
-
-	line.push(new google.maps.LatLng(lat,lon));
-
-	var newPosition=new google.maps.LatLng(lat,lon);
-	sailboat.position=newPosition
-	sailboat.setMap(map);
-
-	var sailroute=new google.maps.Polyline({
-	  path:line,
-	  strokeColor:"#0000FF",
-	  strokeOpacity:0.8,
-	  strokeWeight:2
-	  });
-
+	moveObject.lat += ((tempObject.lat/1000)*speed)*time;
+	moveObject.lng += ((tempObject.lon/1000)*speed)*time;
 	
 
-	sailroute.setMap(map);
-	map.panTo(new google.maps.LatLng(lat,lon));
+
 
 	$('#clock').text('Elapsed Time: '+hours+' hrs')
 
 	try {
-		weather = getWeather(lat,lon);
-		windAngle = weather.current_observation.wind_degrees;
-		windSpeed = Number(weather.current_observation.wind_gust_mph);
 
-		city = weather.location.city;
-		state = weather.location.state;
+		weather = getWeather(lat,lon);
+		moveObject.windAngle = weather.current_observation.wind_degrees;
+		moveObject.windSpeed = Number(weather.current_observation.wind_gust_mph);
+
+		moveObject.city = weather.location.city;
+		moveObject.state = weather.location.state;
 
 		console.log(windAngle,windSpeed,city,state);
 	}
 	catch(e) {
 	}
 
-
-
 	$('#needle2').rotate(windAngle);
+
+	return moveObject;
 }
+
+function moveIndicator(lat,lng,heading,windAngle,windSpeed,time ){
+
+
+
+	var newArray =[];
+	var lat2 = 0;
+	var lng2 = 0;
+
+	var position1=new google.maps.LatLng(lat,lng);
+
+	newArray.push(position1)
+
+	var tempObject= oppositeAdjacent(heading,100);
+
+	var twa = trueWindAngle(heading,windAngle);
+	var speed =calculateSpeed(twa,windSpeed)
+
+	
+	lat2 = lat + ((tempObject.lat/1000)*speed)*time;
+	lng2 = lng + ((tempObject.lon/1000)*speed)*time;
+
+	var position2=new google.maps.LatLng(lat2,lng2);
+	newArray.push(position2)
+
+	return newArray
+
+}
+
+
+
