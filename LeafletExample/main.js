@@ -12,45 +12,65 @@
     }).addTo(mymap);
 
     // set up listeners
-    document.addEventListener("keydown", _keydownHandler);
+    document.addEventListener("keydown", function(evt) {
+        _keydownHandler(evt, boat);
+    }, true);
 
     // boat icon class
-    var boatIconClass = L.Icon.extend({
-            options: {
-                iconSize:     [30, 30],
-                iconAnchor:   [15, 30],
-                popupAnchor:  [-3, -76]
-            }
-        }),
+    // var boatIconClass = L.divIcon.extend({
+    //         options: {
+    //             iconSize:     [30, 30],
+    //             iconAnchor:   [15, 30],
+    //             className : 'boat-icon',
+    //             html : '<img src="sailboat.png">'
+    //         }
+    //     }),
+
+    // MIT-licensed code by Benjamin Becquet
+    // https://github.com/bbecquet/Leaflet.PolylineDecorator
+    L.RotatedMarker = L.Marker.extend({
+      options: { angle: 0 },
+      _setPos: function(pos) {
+        L.Marker.prototype._setPos.call(this, pos);
+        if (L.DomUtil.TRANSFORM) {
+          // use the CSS transform rule if available
+          this._icon.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+        } else if (L.Browser.ie) {
+          // fallback for IE6, IE7, IE8
+          var rad = this.options.angle * L.LatLng.DEG_TO_RAD,
+          costheta = Math.cos(rad),
+          sintheta = Math.sin(rad);
+          this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
+            costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
+        }
+      }
+    });
+    L.rotatedMarker = function(pos, options) {
+        return new L.RotatedMarker(pos, options);
+    };
 
         // boat icon
-        boatIcon = new boatIconClass({iconUrl: 'sailboat.png'}),
-
+    // var boatIcon = L.divIcon({
+    //         iconSize:     [30, 30],
+    //         iconAnchor:   [15, 30],
+    //         className : 'boat-icon',
+    //         html : '<img src="sailboat.png">'
+    //     }),
+    //     boat = L.marker([46.811228, -90.811675], {
+    //         icon: boatIcon
+    //     }).addTo(mymap),
+    boat = L.rotatedMarker(new L.LatLng(46.811228, -90.811675), {
+      icon: L.icon({
+        iconUrl: 'sailboat.png',
+        iconSize: [30,30],
+      }),
+      draggable: true
+    }).addTo(mymap)
         // boat path
-        boatPath = L.polyline([L.latLng(46.811228, -90.811675)]).addTo(mymap);
+    var boatPath = L.polyline([L.latLng(46.811228, -90.811675)]).addTo(mymap);
 
-
-        boat = L.marker([46.811228, -90.811675], {
-            icon: boatIcon
-        }).addTo(mymap),
-        heading = 0;
-
-
-
-    ///////////////////////////////////////////////////////////
-    // FUNCTIONS
-
-    function _keydownHandler(evt) {
-        // left
-        if(evt.keyCode == 37) {
-            heading = heading == 0 ? 360 : heading-1;
-        }
-        // right
-        if(evt.keyCode == 39) {
-            heading = heading == 360 ? 0 : heading+1;
-        }
-    }
+    // boat.options.angle = heading;
 
     // Sail!!
-    _sail(mymap, boat, boatPath, heading);
+    _sail(mymap, boat, boatPath);
 })();

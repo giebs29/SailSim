@@ -1,7 +1,9 @@
-function _sail(map, boat, path, heading) {
+var heading = 0;
+
+function _sail(map, boat, path) {
     // set interval of movement (ms)
     // also used in determining speed
-    var timeInterval = 200,
+    var timeInterval = 500,
         // get time ratio
         secRatio = timeInterval/1000,
         // get current coords
@@ -17,7 +19,7 @@ function _sail(map, boat, path, heading) {
         // get previous distance traveled
         prevDist = L.GeometryUtil.distance(map, prevCoords, currentCoords),
         // get speed = distance over time = meters per second
-        speed = (prevDist == 0 ? .2 : prevDist) * secRatio,
+        speed = (prevDist == 0 ? .1 : prevDist) * secRatio,
         // get travel distance
         travelDist = _getDistance(bearing, heading, weather, speed, timeInterval),
         newCoords = L.GeometryUtil.destination(currentCoords,heading,travelDist),
@@ -35,13 +37,13 @@ function _sail(map, boat, path, heading) {
     // add new bearing line to map
     // newBearingLine.addTo(map);
 
-    console.log('speed', speed * 3.6);
+    // console.log('speed', speed * 3.6);
     // console.log('new point', newCoords);
-    console.log('distance', travelDist);
+    // console.log('distance', travelDist);
 
     // start sailing
     window.setTimeout(function() {
-        _sail(map, boat, path, heading);
+        _sail(map, boat, path);
     }, timeInterval);
 
 
@@ -59,6 +61,7 @@ function _sail(map, boat, path, heading) {
         return (boatVelocity * 0.277778) * (1000/t);
 
         // calculate boat velocity based on wind velocity and apparent and true wind angles
+        // https://sites.google.com/site/yoavraz2/sailingboatspeedvs.windspeed
         function _getBoatVelocity(wv, twa, aa) {
             return wv * (
                 Math.sin(twa - aa) /
@@ -67,6 +70,7 @@ function _sail(map, boat, path, heading) {
         }
 
         // calculate apparent wind angle
+        // https://en.wikipedia.org/wiki/Apparent_wind
         function _getApparentWindAngle(wv, tw, bv) {
             return Math.acos(
                 (wv * Math.cos(tw) + bv) /
@@ -85,4 +89,23 @@ function _sail(map, boat, path, heading) {
             return twa;
         }
     } // end get distance function
+}
+
+function _keydownHandler(evt, b) {
+    // left
+    if(evt.which == 37) {
+        heading = heading == 0 ? 360 : heading-1;
+    }
+    // right
+    if(evt.which == 39) {
+        heading = heading == 360 ? 0 : heading+1;
+    }
+    _updateBoatIcon(heading, b);
+    // console.log('heading', heading);
+    // console.log('boat angle', boat.options.angle);
+    function _updateBoatIcon(h,b) {
+        // var boatIcon = document.getElementsByClassName('boat-icon')[0];
+        // boatIcon.style.transform = 'rotate(' + h + 'deg)';
+        b.options.angle = h;
+    }
 }
