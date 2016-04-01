@@ -1,5 +1,7 @@
 (function() {
-    var mymap = L.map('mapid').setView([46.803010, -90.804323], 13);
+    var mymap = L.map('mapid', {
+        keyboard : false
+    }).setView([46.811228, -90.811675], 17);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
         maxZoom: 18,
@@ -9,11 +11,14 @@
         id: 'mapbox.streets'
     }).addTo(mymap);
 
+    // set up listeners
+    document.addEventListener("keydown", _keydownHandler);
+
     // boat icon class
     var boatIconClass = L.Icon.extend({
             options: {
                 iconSize:     [30, 30],
-                iconAnchor:   [15, 15],
+                iconAnchor:   [15, 30],
                 popupAnchor:  [-3, -76]
             }
         }),
@@ -22,73 +27,30 @@
         boatIcon = new boatIconClass({iconUrl: 'sailboat.png'}),
 
         // boat path
-        boatPath = L.polyline([L.latLng(46.803010, -90.804323)]).addTo(mymap);
+        boatPath = L.polyline([L.latLng(46.811228, -90.811675)]).addTo(mymap);
 
 
-        boat = L.marker([46.803010, -90.804323], {
+        boat = L.marker([46.811228, -90.811675], {
             icon: boatIcon
-        }).addTo(mymap);
-
-    _sail(mymap, boat, boatPath);
-
-    function _sail(map, boat, path) {
-        var currentCoords = boat.getLatLng(),
-            currentPt = map.project(currentCoords),
-            newPt = _getNewPoint(currentPt),
-            newCoords = map.unproject(newPt),
-            dist = L.GeometryUtil.distance(map, currentCoords, newCoords),
-            duration = Math.pow(dist, 2),
-            newBearingLine = _createBearingLine(currentCoords, newCoords);
-
-            // add new lat lng to boat path
-            path.addLatLng(newCoords);
-
-            // add new bearing line to map
-            newBearingLine.addTo(map);
-
-            console.log('current point', currentCoords);
-            console.log('new point', newCoords);
-            console.log('distance', dist);
+        }).addTo(mymap),
+        heading = 0;
 
 
 
-            _moveBoat(map, boat, newBearingLine, dist, path);
+    ///////////////////////////////////////////////////////////
+    // FUNCTIONS
 
-        function _moveBoat(m, b, n, d, p) {
-            console.log(m,b,n,d);
-            var increment = 1/d,
-                start = 0,
-            // continue while distance is greater than zero
-                inter = window.setInterval(function () {
-                    start += increment;
-                    var newPt = L.GeometryUtil.interpolateOnLine(m,n,start);
-                        b.setLatLng(newPt.latLng);
-                    if (start >= 1) {
-                        clearInterval(inter);
-                        _sail(m, b, p);
-                    }
-                }, 100);
+    function _keydownHandler(evt) {
+        // left
+        if(evt.keyCode == 37) {
+            heading = heading == 0 ? 360 : heading-1;
         }
-
-        function _createBearingLine(c, n) {
-            return L.polyline([c,n],{
-                color : '#FF0000',
-                weight : 2,
-                opacity : 1
-            });
+        // right
+        if(evt.keyCode == 39) {
+            heading = heading == 360 ? 0 : heading+1;
         }
+    }
 
-        function _getNewPoint(cc) {
-            cc.x += getRandomIntInclusive(-30,30);
-            cc.y += getRandomIntInclusive(-30,30);
-            return cc;
-
-            // Returns a random integer between min (included) and max (included)
-            // Using Math.round() will give you a non-uniform distribution!
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-            function getRandomIntInclusive(min, max) {
-              return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-        }
-    }  // end sail function
+    // Sail!!
+    _sail(mymap, boat, boatPath, heading);
 })();

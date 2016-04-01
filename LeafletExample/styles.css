@@ -1,0 +1,15 @@
+#mapid {
+    width: 800px;
+    height: 450px;
+}
+
+#headingContainer {
+    position: absolute;
+    top: 80px;
+    left: 16px;
+}
+
+#headingContainer img {
+    height: 30px;
+    width:30px;
+}
