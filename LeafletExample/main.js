@@ -11,11 +11,6 @@
         id: 'mapbox.streets'
     }).addTo(mymap);
 
-    // set up listeners
-    document.addEventListener("keydown", function(evt) {
-        _keydownHandler(evt, boat);
-    }, true);
-
     // boat icon class
     // var boatIconClass = L.divIcon.extend({
     //         options: {
@@ -27,6 +22,7 @@
     //     }),
 
     // MIT-licensed code by Benjamin Becquet
+    // https://www.mapbox.com/mapbox.js/example/v1.0.0/rotating-controlling-marker/
     // https://github.com/bbecquet/Leaflet.PolylineDecorator
     L.RotatedMarker = L.Marker.extend({
       options: { angle: 0 },
@@ -65,12 +61,14 @@
         iconSize: [30,30],
       }),
       draggable: true
-    }).addTo(mymap)
+    }).addTo(mymap),
         // boat path
-    var boatPath = L.polyline([L.latLng(46.811228, -90.811675)]).addTo(mymap);
+        boatPath = L.polyline([L.latLng(46.811228, -90.811675)]).addTo(mymap),
+        sailing = new Sail(mymap, boat, boatPath);
+
 
     // boat.options.angle = heading;
 
     // Sail!!
-    _sail(mymap, boat, boatPath);
+    sailing.move();
 })();
